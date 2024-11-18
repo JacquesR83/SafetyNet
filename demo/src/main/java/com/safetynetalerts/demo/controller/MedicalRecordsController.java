@@ -1,4 +1,4 @@
 package com.safetynetalerts.demo.controller;
 
-public class firestationController {
+public class MedicalRecordsController {
 }

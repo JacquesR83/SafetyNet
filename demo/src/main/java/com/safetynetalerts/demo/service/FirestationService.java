@@ -1,4 +1,4 @@
 package com.safetynetalerts.demo.service;
 
-public class firestationService {
+public class FirestationService {
 }

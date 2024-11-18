@@ -1,26 +1,24 @@
 package com.safetynetalerts.demo.model;
 
-import java.util.List;
-
-public class medicalRecords {
+public class MedicalRecord {
     private String firstName;
     private String lastName;
-    private String dob;
-    private List<String> medications;
-    private List<String> allergies;
+    private String birthdate;
+    private String[] medications;
+    private String[] allergies;
 
 
-    public medicalRecords() {
+    public MedicalRecord() {
     }
 
-    public medicalRecords(String firstName, String lastName, String dob, List<String> medications, List<String> allergies) {
+    public MedicalRecord(String firstName, String lastName, String birthdate, String[] medications, String[] allergies) {
+
         this.firstName = firstName;
         this.lastName = lastName;
-        this.dob = dob;
+        this.birthdate = birthdate;
         this.medications = medications;
         this.allergies = allergies;
     }
-
 
     public String getFirstName() {
         return firstName;
@@ -38,27 +36,27 @@ public class medicalRecords {
         this.lastName = lastName;
     }
 
-    public String getDob() {
-        return dob;
+    public String getBirthdate() {
+        return birthdate;
     }
 
-    public void setDob(String dob) {
-        this.dob = dob;
+    public void setBirthdate(String birthdate) {
+        this.birthdate = birthdate;
     }
 
-    public List<String> getMedications() {
+    public String[] getMedications() {
         return medications;
     }
 
-    public void setMedications(List<String> medications) {
+    public void setMedications(String[] medications) {
         this.medications = medications;
     }
 
-    public List<String> getAllergies() {
+    public String[] getAllergies() {
         return allergies;
     }
 
-    public void setAllergies(List<String> allergies) {
+    public void setAllergies(String[] allergies) {
         this.allergies = allergies;
     }
 }

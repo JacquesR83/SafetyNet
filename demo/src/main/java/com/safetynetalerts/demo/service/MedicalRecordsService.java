@@ -1,4 +1,4 @@
 package com.safetynetalerts.demo.service;
 
-public class personsService {
+public class MedicalRecordsService {
 }
