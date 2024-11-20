@@ -7,10 +7,11 @@ import com.safetynetalerts.demo.repository.FirestationRepository;
 import com.safetynetalerts.demo.repository.MedicalRecordsRepository;
 import com.safetynetalerts.demo.repository.PersonRepository;
 import com.safetynetalerts.demo.service.dto.FireDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,19 +23,16 @@ public class PersonService {
     private final FirestationRepository firestationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
 
-    private final FirestationService firestationService;
-
 
     public PersonService(PersonRepository personRepository, FirestationRepository firestationRepository, MedicalRecordsRepository medicalRecordsRepository, FirestationService firestationService) {
         this.personRepository = personRepository;
         this.firestationRepository = firestationRepository;
         this.medicalRecordsRepository = medicalRecordsRepository;
-        this.firestationService = firestationService;
     }
 
 
-    public List<String> findAllEmailsByCity(String city){
-        return this.personRepository.findAllPersons().stream().filter(p -> p.getCity().equals(city)).map(p ->p.getEmail()).collect(Collectors.toList());
+    public List<String> findAllEmailsByCity(String city) {
+        return this.personRepository.findAllPersons().stream().filter(p -> p.getCity().equals(city)).map(p -> p.getEmail()).collect(Collectors.toList());
 
     }
 
@@ -46,36 +44,61 @@ public class PersonService {
         // Pour l'âge il faut récupérer le birthdate et calculer avec la date d'aujourd'hui (résultat dans un String en années) puis le stocker dans le DTO
         // On retourne la liste des DTOS
 
-        List<Person> persons = this.personRepository.findAllPersons();
-        List <Firestation> firestations = this.firestationRepository.findAllFireStations();
-        List <MedicalRecord> medicalRecords = this.medicalRecordsRepository.findAllMedicalRecords();
+        //Recupere les personnes
+        List<Person> persons = this.personRepository.findAllPersonsByAddress(address);
+        //Recupere les medicalRecords
+        List<MedicalRecord> medicalRecords = this.medicalRecordsRepository.findAllMedicalRecords();
 
-        Person person = new Person();
-        FireDTO fireDTO = new FireDTO();
-
-        for (Person persona : persons) {
-            Firestation firestation = new Firestation();
-
-            if(firestationService.personContainsFirestationAdress(firestations, persona)){
-                fireDTO.setLastName(persona.getLastName());
-                fireDTO.setFirestation(String.valueOf(equals(firestation.getStation())));
+        //Cree une nouvelle liste et insere les noms correspondants
+        for (Person person : persons) {
+            MedicalRecord medicalRecord = medicalRecordsContainsPerson(medicalRecords, person); // Compare les champs (firstName & lastName) de medicalRecord et de person
+            if (medicalRecord != null) {
+                FireDTO fireDTO = new FireDTO();
+                Firestation firestation = firestationRepository.findFireStationNumberByAddress(address);
+                fireDTO.setFirestation(firestation.getStation());
+                fireDTO.setLastName(person.getLastName());
+                fireDTO.setPhoneNumber(person.getPhone());
+                fireDTO.setAge(String.valueOf(ComputeToAge(medicalRecord.getBirthdate()))); // Calcul de l'âge dans ComputeToAge
+                fireDTO.setMedications(medicalRecord.getMedications());
+                fireDTO.setAllergies(medicalRecord.getAllergies());
+                result.add(fireDTO);
             }
         }
-        result.add(fireDTO);
-//
         return result;
     }
 
-    public String ageCalculator(String birthdate){
-        MedicalRecord medicalRecord = new MedicalRecord();
-        Integer age;
-        Integer today = (Integer) parse(LocalDate.now().toString());
-        age = today - birthdate;
-        medicalRecord.getBirthdate();
+//
+
+    private MedicalRecord medicalRecordsContainsPerson(List<MedicalRecord> medicalRecords, Person person) {
+        for (MedicalRecord medicalRecord : medicalRecords) {
+            if (medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName())) {
+                return medicalRecord;
+            }
+        }
+        return null;
     }
 
+
+    // Calcul de l'âge
+    private int ComputeToAge(String birthdateOfPerson) {
+        LocalDate dob = LocalDate.parse(birthdateOfPerson, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+        LocalDate today = LocalDate.now();
+        int age = Period.between(dob, today).getYears();
+        return age;
+    }
+
+    // Pour déterminer les enfants
+    private boolean IsAdult(String birthdateOfPerson) {
+        LocalDate dob = LocalDate.parse(birthdateOfPerson, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+        LocalDate today = LocalDate.now();
+        int age = Period.between(dob, today).getYears();
+        if (age > 18) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+
+
 }
-
-
-
-//fireDTO.setFirestation(firestations.get);

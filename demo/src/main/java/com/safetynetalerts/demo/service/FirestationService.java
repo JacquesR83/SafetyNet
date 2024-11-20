@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class FirestationService {
@@ -31,14 +30,14 @@ public class FirestationService {
         List<Person> persons = personRepository.findAllPersons();
 
         for (Person person : persons) {
-            if (personContainsFirestationAdress(firestations, person)) {
+            if (personContainsFirestationAddress(firestations, person)) {
                 result.add(person.getPhone());
             }
         }
         return result;
     }
 
-    public boolean personContainsFirestationAdress(List<Firestation> firestations, Person person) {
+    public boolean personContainsFirestationAddress(List<Firestation> firestations, Person person) {
         for(Firestation firestation : firestations){
             if(firestation.getAddress().equals(person.getAddress())){
                 return true;

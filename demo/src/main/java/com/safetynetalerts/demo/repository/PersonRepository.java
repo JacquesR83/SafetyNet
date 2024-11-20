@@ -2,14 +2,16 @@ package com.safetynetalerts.demo.repository;
 
 import com.safetynetalerts.demo.model.MedicalRecord;
 import com.safetynetalerts.demo.model.Person;
-import com.safetynetalerts.demo.service.PersonService;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @Component
 public class PersonRepository {
-    private static MedicalRecord[] medicalRecords;
+
     private DataHandler dataHandler;
 
     public PersonRepository(DataHandler dataHandler) {
@@ -20,13 +22,13 @@ public class PersonRepository {
         return dataHandler.getData().getPersons();
     }
 
-    public static MedicalRecord findMedicalRecordByPerson(Person person) {
-        for (MedicalRecord record : medicalRecords) {
-            if (record.getFirstName().equals(person.getFirstName()) && record.getLastName().equals(person.getLastName())) {
-                return record;
-            }
-        }
-        return null;
+    public List<Person> findAllPersonsByAddress(String address) {
+        return dataHandler.getData().getPersons().stream().filter(p -> p.getAddress().equals(address)).collect(Collectors.toList());
     }
 
+    public Person findPersonByFirstNameAndLastName(String firstName, String lastName) {
+        return dataHandler.getData().getPersons().stream()
+                .filter(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName)).findFirst()
+                .orElseGet(()->new Person());
+    }
 }

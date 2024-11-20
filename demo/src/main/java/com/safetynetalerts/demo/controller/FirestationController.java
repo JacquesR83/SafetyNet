@@ -20,4 +20,6 @@ public class FirestationController {
     public List<String> phoneNumbersList(@RequestParam(name = "firestation") int number) {
         return this.firestationService.findPhoneNumbersByStationNumber(number);
     }
+
+
 }
