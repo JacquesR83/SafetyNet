@@ -7,6 +7,7 @@ import com.safetynetalerts.demo.repository.FirestationRepository;
 import com.safetynetalerts.demo.repository.MedicalRecordsRepository;
 import com.safetynetalerts.demo.repository.PersonRepository;
 import com.safetynetalerts.demo.service.dto.FireDTO;
+import com.safetynetalerts.demo.service.dto.PersonDTO;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -78,6 +79,15 @@ public class PersonService {
         return null;
     }
 
+    private String joinBirthdate(List<MedicalRecord> medicalRecords, Person person) {
+        for (MedicalRecord medicalRecord : medicalRecords) {
+            if (medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName())) {
+                return medicalRecord.getBirthdate();
+            }
+        }
+        return null;
+    }
+
 
     // Calcul de l'âge
     private int ComputeToAge(String birthdateOfPerson) {
@@ -100,5 +110,30 @@ public class PersonService {
     }
 
 
+    public List <PersonDTO> familyInformation(String firstName, String lastName) {
+        List<PersonDTO> result = new ArrayList<>();
+        List<Person> persons = this.personRepository.findAllPersonsWithLastName(lastName);
+        List<MedicalRecord> medicalRecords = this.medicalRecordsRepository.findAllMedicalRecords();
 
+        for(Person person : persons ) {
+            MedicalRecord medicalRecord = medicalRecordsContainsPerson(medicalRecords, person);
+            if(medicalRecord != null) {
+                PersonDTO personDTO = new PersonDTO();
+
+                personDTO.setLastName(person.getLastName());
+                personDTO.setAddress(person.getAddress());
+                personDTO.setAge(String.valueOf(ComputeToAge(medicalRecord.getBirthdate())));
+                personDTO.setEmail(person.getEmail());
+                personDTO.setMedications(medicalRecord.getMedications());
+                personDTO.setAllergies(medicalRecord.getAllergies());
+
+                result.add(personDTO);
+            }
+        }
+        return result;
+    }
+
+//    public List<PersonDTO> childListAtThisAddress(String address) {
+//
+//    }
 }

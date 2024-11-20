@@ -1,6 +1,7 @@
 package com.safetynetalerts.demo.service.dto;
 
 public class PersonDTO {
+
     String lastName;
     String address;
     String age;

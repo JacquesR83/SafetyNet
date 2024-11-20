@@ -1,9 +1,6 @@
 
 package com.safetynetalerts.demo.controller;
 
-import com.safetynetalerts.demo.model.Firestation;
-import com.safetynetalerts.demo.model.Person;
-import com.safetynetalerts.demo.repository.FirestationRepository;
 import com.safetynetalerts.demo.service.PersonService;
 import com.safetynetalerts.demo.service.dto.FireDTO;
 import com.safetynetalerts.demo.service.dto.PersonDTO;
@@ -34,9 +31,13 @@ public class PersonController {
     }
 
     @GetMapping(path={"personInfo"})
-    public PersonDTO PersonInfo(@RequestParam (name="firstName") String firstName, @RequestParam (name="lastName") String lastName) {
-        return this.personService.personInformationsAndMedicalRecords(firstName,lastName);
+    public List<PersonDTO> PersonInfoAndFamily(@RequestParam (name="firstName") String firstName, @RequestParam (name="lastName") String lastName) {
+        return this.personService.familyInformation(firstName,lastName);
     }
 
+//    @GetMapping(path = "{childAlert}")
+//    public List<PersonDTO> childAlerts(@RequestParam (name= "address") String address){
+//        return this.personService.childListAtThisAddress(address);
+//    }
 
 }
