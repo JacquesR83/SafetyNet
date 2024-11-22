@@ -1,11 +1,13 @@
 package com.safetynetalerts.demo.service;
 
+import com.safetynetalerts.demo.controller.PersonController;
 import com.safetynetalerts.demo.model.Firestation;
 import com.safetynetalerts.demo.model.MedicalRecord;
 import com.safetynetalerts.demo.model.Person;
 import com.safetynetalerts.demo.repository.FirestationRepository;
 import com.safetynetalerts.demo.repository.MedicalRecordsRepository;
 import com.safetynetalerts.demo.repository.PersonRepository;
+import com.safetynetalerts.demo.service.dto.ChildDTO;
 import com.safetynetalerts.demo.service.dto.FireDTO;
 import com.safetynetalerts.demo.service.dto.PersonDTO;
 import org.springframework.stereotype.Service;
@@ -15,7 +17,11 @@ import java.time.Period;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
+
+import static com.safetynetalerts.demo.model.Person.computeToAge;
+import static com.safetynetalerts.demo.model.Person.isAdult;
 
 @Service
 public class PersonService {
@@ -59,7 +65,7 @@ public class PersonService {
                 fireDTO.setFirestation(firestation.getStation());
                 fireDTO.setLastName(person.getLastName());
                 fireDTO.setPhoneNumber(person.getPhone());
-                fireDTO.setAge(String.valueOf(ComputeToAge(medicalRecord.getBirthdate()))); // Calcul de l'âge dans ComputeToAge
+                fireDTO.setAge(String.valueOf(computeToAge(medicalRecord.getBirthdate()))); // Calcul de l'âge dans ComputeToAge
                 fireDTO.setMedications(medicalRecord.getMedications());
                 fireDTO.setAllergies(medicalRecord.getAllergies());
                 result.add(fireDTO);
@@ -79,50 +85,22 @@ public class PersonService {
         return null;
     }
 
-    private String joinBirthdate(List<MedicalRecord> medicalRecords, Person person) {
-        for (MedicalRecord medicalRecord : medicalRecords) {
-            if (medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName())) {
-                return medicalRecord.getBirthdate();
-            }
-        }
-        return null;
-    }
 
 
-    // Calcul de l'âge
-    private int ComputeToAge(String birthdateOfPerson) {
-        LocalDate dob = LocalDate.parse(birthdateOfPerson, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        LocalDate today = LocalDate.now();
-        int age = Period.between(dob, today).getYears();
-        return age;
-    }
 
-    // Pour déterminer les enfants
-    private boolean IsAdult(String birthdateOfPerson) {
-        LocalDate dob = LocalDate.parse(birthdateOfPerson, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        LocalDate today = LocalDate.now();
-        int age = Period.between(dob, today).getYears();
-        if (age > 18) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-
-    public List <PersonDTO> familyInformation(String firstName, String lastName) {
+    public List<PersonDTO> familyInformation(String firstName, String lastName) {
         List<PersonDTO> result = new ArrayList<>();
         List<Person> persons = this.personRepository.findAllPersonsWithLastName(lastName);
         List<MedicalRecord> medicalRecords = this.medicalRecordsRepository.findAllMedicalRecords();
 
-        for(Person person : persons ) {
+        for (Person person : persons) {
             MedicalRecord medicalRecord = medicalRecordsContainsPerson(medicalRecords, person);
-            if(medicalRecord != null) {
+            if (medicalRecord != null) {
                 PersonDTO personDTO = new PersonDTO();
 
                 personDTO.setLastName(person.getLastName());
                 personDTO.setAddress(person.getAddress());
-                personDTO.setAge(String.valueOf(ComputeToAge(medicalRecord.getBirthdate())));
+                personDTO.setAge(String.valueOf(computeToAge(medicalRecord.getBirthdate())));
                 personDTO.setEmail(person.getEmail());
                 personDTO.setMedications(medicalRecord.getMedications());
                 personDTO.setAllergies(medicalRecord.getAllergies());
@@ -133,7 +111,62 @@ public class PersonService {
         return result;
     }
 
-//    public List<PersonDTO> childListAtThisAddress(String address) {
-//
-//    }
+
+    // Méthode avec des streams
+    public List<ChildDTO> childListAtThisAddress(String address) {
+        List<Person> personList = personRepository.findAllPersonsByAddress(address);
+        // Cette ligne remplace l'instanciation de l'objet et le return en fin de méthode, le return se déclare directement au début
+        return medicalRecordsRepository
+                .findAllMedicalRecords()
+                .stream()
+
+                // Filter All persons match with lastName
+                .filter(medicalRecord ->
+                        personList.stream()
+                                .allMatch(
+                                        person -> Objects.equals(person.getLastName(), medicalRecord.getLastName())
+                                )
+                )
+
+                // Filter Match isAdult return false to select a minorPerson
+                .filter(medicalRecord -> !isAdult(medicalRecord.getBirthdate()))
+
+                // MAPPING DATA TO DTO MODEL ChildAlertDTO
+                .map(mapper ->
+                        new ChildDTO(
+                                mapper.getFirstName(),
+                                mapper.getLastName(),
+                                Person.computeToAge((mapper.getBirthdate())),
+                                personList
+                                        .stream()
+                                        .filter(person -> Objects.equals(person.getLastName(), mapper.getLastName()) != Objects.equals(person.getFirstName(), mapper.getFirstName()))
+                                        .toList()
+                        )
+                )
+                // Collect to ChildAlertDTO
+                .collect(Collectors.toList());
+    }
 }
+
+//    public List<ChildDTO> childListAtThisAddress(String address) {
+//        List <ChildDTO> childrenAndRelatives = new ArrayList<>();
+//        List<Person> persons = this.personRepository.findAllPersonsByAddress(address);
+//        List<MedicalRecord> medicalRecords = this.medicalRecordsRepository.findAllMedicalRecords();
+//
+//
+//            for (Person person : persons) {
+//                // Doit retourner nom, prenom, age des enfants et une liste des autres membres du foyer
+//                medicalRecordsContainsPerson(medicalRecords, person);
+//                int age = ComputeToAge(joinBirthdate(medicalRecords, person));
+//                if(age < 18 && childrenAndRelatives.contains()) {
+//                    ChildDTO childDTO = new ChildDTO();
+//                    childDTO.setFirstName(person.getFirstName());
+//                    childDTO.setLastName(person.getLastName());
+//                    childDTO.setAge(String.valueOf(ComputeToAge(joinBirthdate(medicalRecords, person))));
+//                    childDTO.getFamilyMembers().add(person);
+//                    childrenAndRelatives.add(childDTO);
+//                }
+//            }
+//            return childrenAndRelatives;
+//    }
+//}
