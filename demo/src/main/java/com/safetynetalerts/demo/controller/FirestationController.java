@@ -22,10 +22,10 @@ public class FirestationController {
         return this.firestationService.findPhoneNumbersByStationNumber(number);
     }
 
-    @GetMapping(path = "firestation")
-    public List<FireStationPersonDTO> peopleCountByFirestation(@RequestParam (name = "firestation") int number){
-        return this.firestationService.findPeopleCountByFirestation(number);
-    }
+//    @GetMapping(path = "firestation")
+//    public List<FireStationPersonDTO> peopleCountByFirestation(@RequestParam (name = "firestation") int number){
+//        return this.firestationService.findPeopleCountByFirestation(number);
+//    }
 
 
 }
