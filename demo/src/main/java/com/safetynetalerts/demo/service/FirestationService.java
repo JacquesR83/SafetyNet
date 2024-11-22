@@ -6,6 +6,7 @@ import com.safetynetalerts.demo.model.Person;
 import com.safetynetalerts.demo.repository.FirestationRepository;
 import com.safetynetalerts.demo.repository.MedicalRecordsRepository;
 import com.safetynetalerts.demo.repository.PersonRepository;
+import com.safetynetalerts.demo.service.dto.FireStationPersonDTO;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -46,4 +47,7 @@ public class FirestationService {
         return false;
     }
 
+    public List<FireStationPersonDTO> findPeopleCountByFirestation(int number) {
+        List<Firestation> firestations = firestationRepository.findPeopleByStation(number);
+    }
 }
