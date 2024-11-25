@@ -27,10 +27,10 @@ public class FirestationController {
         return this.firestationService.findPeopleCountByFirestation(number);
     }
 
-//    @GetMapping(path = "flood")
-//    public List<HearthDTO> hearthDeliverdByCasern (@RequestParam (name = "flood") int number) {
-//        return this.firestationService.findPeopleByAddress(number);
-//    }
+    @GetMapping(path = "flood")
+    public List<HearthDTO> hearthDeliverdByCasern (@RequestParam (name = "flood") int number) {
+        return this.firestationService.findPeopleByAddress(number);
+    }
 
 //    @GetMapping(path = "test")
 //    public String test(@RequestParam (name = "address") String address){
