@@ -76,7 +76,7 @@ public class PersonService {
 
 //
 
-    private MedicalRecord medicalRecordsContainsPerson(List<MedicalRecord> medicalRecords, Person person) {
+    public static MedicalRecord medicalRecordsContainsPerson(List<MedicalRecord> medicalRecords, Person person) {
         for (MedicalRecord medicalRecord : medicalRecords) {
             if (medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName())) {
                 return medicalRecord;
@@ -84,8 +84,6 @@ public class PersonService {
         }
         return null;
     }
-
-
 
 
     public List<PersonDTO> familyInformation(String firstName, String lastName) {

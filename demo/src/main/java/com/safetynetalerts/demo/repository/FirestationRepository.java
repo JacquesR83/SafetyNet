@@ -36,5 +36,8 @@ public class FirestationRepository {
         return dataHandler.getData().getFirestations();
     }
 
-
+//
+//    public List<Firestation> findPeopleByStation(int number) {
+//        return dataHandler.getData().getPersons().stream().filter(firestation ->
+//    }
 }

@@ -1,7 +1,7 @@
 package com.safetynetalerts.demo.controller;
 
 import com.safetynetalerts.demo.service.FirestationService;
-import com.safetynetalerts.demo.service.dto.FireStationPersonDTO;
+import com.safetynetalerts.demo.service.dto.FirestationDTO;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,9 +23,20 @@ public class FirestationController {
     }
 
     @GetMapping(path = "firestation")
-    public List<FireStationPersonDTO> peopleCountByFirestation(@RequestParam (name = "firestation") int number){
+    public FirestationDTO personListByFirestation(@RequestParam (name = "stationNumber") int number){
         return this.firestationService.findPeopleCountByFirestation(number);
     }
+
+//    @GetMapping(path = "flood")
+//    public List<HearthDTO> hearthDeliverdByCasern (@RequestParam (name = "flood") int number) {
+//        return this.firestationService.findPeopleByAddress(number);
+//    }
+
+//    @GetMapping(path = "test")
+//    public String test(@RequestParam (name = "address") String address){
+//        return this.firestationService.fireStationNumberAtThisAddress(address);
+//    }
+
 
 
 }
