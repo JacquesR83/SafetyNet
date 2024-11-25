@@ -1,6 +1,5 @@
 package com.safetynetalerts.demo.service;
 
-import com.safetynetalerts.demo.controller.PersonController;
 import com.safetynetalerts.demo.model.Firestation;
 import com.safetynetalerts.demo.model.MedicalRecord;
 import com.safetynetalerts.demo.model.Person;
@@ -12,16 +11,13 @@ import com.safetynetalerts.demo.service.dto.FireDTO;
 import com.safetynetalerts.demo.service.dto.PersonDTO;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.Period;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import static com.safetynetalerts.demo.model.Person.computeToAge;
 import static com.safetynetalerts.demo.model.Person.isAdult;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class PersonService {
@@ -39,7 +35,7 @@ public class PersonService {
 
 
     public List<String> findAllEmailsByCity(String city) {
-        return this.personRepository.findAllPersons().stream().filter(p -> p.getCity().equals(city)).map(p -> p.getEmail()).collect(Collectors.toList());
+        return this.personRepository.findAllPersons().stream().filter(p -> p.getCity().equals(city)).map(p -> p.getEmail()).collect(toList());
 
     }
 
@@ -74,15 +70,44 @@ public class PersonService {
         return result;
     }
 
+//    public List<FireDTO> findAllPersonsWithMedicalRecordsVersionStream(String address) {
+//        // Récupérer la liste des personnes à l'adresse donnée
+//        List<Person> persons = this.personRepository.findAllPersonsByAddress(address);
+//
+//        // Récupérer la liste des enregistrements médicaux
+//        List<MedicalRecord> medicalRecords = this.medicalRecordsRepository.findAllMedicalRecords();
+//
+//        Firestation firestation = firestationRepository.findFireStationNumberByAddress(address);
+//
+//        Person person = new Person();
+//        return persons.stream().map(person2 -> {
+//                MedicalRecord medicalRecord = medicalRecordsContainsPerson(medicalRecords, person);
+//            if (medicalRecord != null){
+//                FireDTO fireDTO = new FireDTO();
+//                fireDTO.setFirestation(firestation.getStation());  // Numéro de la station
+//                fireDTO.setLastName(person.getLastName());        // Nom de la personne
+//                fireDTO.setPhoneNumber(person.getPhone());       // Numéro de téléphone
+//                fireDTO.setAge(String.valueOf(computeToAge(medicalRecord.getBirthdate())));  // Calcul de l'âge
+//                fireDTO.setMedications(medicalRecord.getMedications());  // Médications
+//                fireDTO.setAllergies(medicalRecord.getAllergies());      // Allergies
+//                return fireDTO;
+//            }
+//            return null;
+//        })
+//                .filter(Objects :: nonNull)
+//                .collect(toList());
+//    }
+
+
+
+
 //
 
+
     public static MedicalRecord medicalRecordsContainsPerson(List<MedicalRecord> medicalRecords, Person person) {
-        for (MedicalRecord medicalRecord : medicalRecords) {
-            if (medicalRecord.getFirstName().equals(person.getFirstName()) && medicalRecord.getLastName().equals(person.getLastName())) {
-                return medicalRecord;
-            }
-        }
-        return null;
+        return medicalRecords.stream()
+                .filter(mr -> mr.getFirstName().equals(person.getFirstName()) && mr.getLastName().equals(person.getLastName()))
+                .findFirst().orElse(null);
     }
 
 
@@ -134,7 +159,7 @@ public class PersonService {
                         new ChildDTO(
                                 mapper.getFirstName(),
                                 mapper.getLastName(),
-                                Person.computeToAge((mapper.getBirthdate())),
+                                computeToAge((mapper.getBirthdate())),
                                 personList
                                         .stream()
                                         .filter(person -> Objects.equals(person.getLastName(), mapper.getLastName()) != Objects.equals(person.getFirstName(), mapper.getFirstName()))
@@ -142,7 +167,7 @@ public class PersonService {
                         )
                 )
                 // Collect to ChildAlertDTO
-                .collect(Collectors.toList());
+                .collect(toList());
     }
 }
 

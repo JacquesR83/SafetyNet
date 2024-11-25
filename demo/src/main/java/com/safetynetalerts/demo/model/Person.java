@@ -106,9 +106,7 @@ public class Person {
 
     // Pour déterminer les enfants
     public static boolean isAdult(String birthdateOfPerson) {
-        LocalDate dob = LocalDate.parse(birthdateOfPerson, DateTimeFormatter.ofPattern("MM/dd/yyyy"));
-        LocalDate today = LocalDate.now();
-        int age = Period.between(dob, today).getYears();
+        int age = computeToAge(birthdateOfPerson);
         if (age > 18) {
             return true;
         } else {
