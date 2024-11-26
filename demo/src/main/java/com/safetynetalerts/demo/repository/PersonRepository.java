@@ -1,9 +1,17 @@
 package com.safetynetalerts.demo.repository;
 
+import com.jsoniter.JsonIterator;
+import com.jsoniter.annotation.JsonObject;
+import com.jsoniter.any.Any;
+import com.jsoniter.output.JsonStream;
 import com.safetynetalerts.demo.model.MedicalRecord;
 import com.safetynetalerts.demo.model.Person;
+import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,7 +26,7 @@ public class PersonRepository {
         this.dataHandler = dataHandler;
     }
 
-    public List<Person> findAllPersons(){
+    public List<Person> findAllPersons() {
         return dataHandler.getData().getPersons();
     }
 
@@ -26,10 +34,10 @@ public class PersonRepository {
         return dataHandler.getData().getPersons().stream().filter(p -> p.getAddress().equals(address)).collect(Collectors.toList());
     }
 
-    public Person findPersonByFirstNameAndLastName(String firstName, String lastName){
+    public Person findPersonByFirstNameAndLastName(String firstName, String lastName) {
         return dataHandler.getData().getPersons().stream()
-                .filter(p ->p.getFirstName().equals(firstName) && p.getLastName().equals(lastName))
-                        .findFirst().orElseGet(()-> new Person());
+                .filter(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName))
+                .findFirst().orElseGet(() -> new Person());
     }
 
     public String findPersonEmail(String firstName, String lastName) {
@@ -50,5 +58,21 @@ public class PersonRepository {
     public List<Person> findAllPersonsWithLastName(String lastName) {
         return dataHandler.getData().getPersons().stream()
                 .filter(person -> person.getLastName().equals(lastName)).collect(Collectors.toList());
+    }
+
+    public void save(Person person) {
+        dataHandler.getData().addPerson(person);
+    }
+
+    public void deletePerson(String firstName, String lastName) {
+        dataHandler.getData().getPersons().removeIf(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName));
+    }
+
+    public boolean exists(String firstName, String lastName) {
+        if (dataHandler.getData().getPersons().contains(findPersonByFirstNameAndLastName(firstName, lastName))) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

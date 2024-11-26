@@ -1,6 +1,7 @@
 
 package com.safetynetalerts.demo.controller;
 
+import com.safetynetalerts.demo.model.Person;
 import com.safetynetalerts.demo.service.PersonService;
 import com.safetynetalerts.demo.service.dto.ChildDTO;
 import com.safetynetalerts.demo.service.dto.FireDTO;
@@ -21,6 +22,50 @@ public class PersonController {
         this.personService = personService;
     }
 
+    @GetMapping(path = "person/get")
+    public List <Person> getPeople (@RequestParam (name = "lastName") String lastName){
+        return personService.findAllPersonsWithLastName(lastName);
+    }
+
+    @PostMapping(path = "person/add")
+    public void addPerson(@RequestBody Person person){
+        personService.addPerson(person);
+    }
+
+    @DeleteMapping(path = "person/delete")
+    public void deletePerson(@RequestParam (name = "firstName") String firstName, @RequestParam (name = "lastName") String lastName){
+        personService.deletePersonByFirstNameAndLastName(firstName, lastName);
+    }
+
+    @PutMapping(path = "person/update")
+    public void updatePerson (@RequestBody Person person){
+        personService.updatePerson(person);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //URLS
     @GetMapping(path = {"communityEmail"})
     public List<String> emailsList(@RequestParam (name="city") String city) {
         return this.personService.findAllEmailsByCity(city);

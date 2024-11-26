@@ -33,6 +33,10 @@ public class PersonService {
         this.medicalRecordsRepository = medicalRecordsRepository;
     }
 
+    public void addPerson(Person person) {
+        this.personRepository.save(person);
+    }
+
 
     public List<String> findAllEmailsByCity(String city) {
         return this.personRepository.findAllPersons().stream().filter(p -> p.getCity().equals(city)).map(p -> p.getEmail()).collect(toList());
@@ -168,6 +172,20 @@ public class PersonService {
                 )
                 // Collect to ChildAlertDTO
                 .collect(toList());
+    }
+
+    public List<Person> findAllPersonsWithLastName(String lastName) {
+        List <Person> result = new ArrayList();
+        result = personRepository.findAllPersons().stream().filter(p ->p.getLastName().equals(lastName)).toList();
+        return result;
+    }
+
+    public void deletePersonByFirstNameAndLastName(String firstName, String lastName) {
+        boolean available = personRepository.exists(firstName, lastName);
+        if(!available) {
+            throw new IllegalArgumentException();
+        }
+        personRepository.deletePerson(firstName, lastName);
     }
 }
 
