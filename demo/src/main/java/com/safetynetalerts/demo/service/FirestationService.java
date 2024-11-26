@@ -227,4 +227,19 @@ public class FirestationService {
 
 
 
+    // CRUD
+    public Firestation getFirestation(String address){
+        return firestationRepository.findAllFireStations().stream()
+                .filter(f -> f.getAddress().equals(address)).findFirst().get();
+    }
+
+    public void addFirestation(Firestation firestation) {
+        this.firestationRepository.save(firestation);
+    }
+//
+//    public void deleteFirestation(String address, int number) {
+//    }
+//
+//    public void updateFirestation(String address, int number, Firestation firestation) {
+//    }
 }

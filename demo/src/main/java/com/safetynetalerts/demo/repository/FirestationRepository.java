@@ -36,6 +36,10 @@ public class FirestationRepository {
         return dataHandler.getData().getFirestations();
     }
 
+    public void save(Firestation firestation) {
+        dataHandler.getData().getFirestations().add(firestation);
+    }
+
 //
 //    public List<Firestation> findPeopleByStation(int number) {
 //        return dataHandler.getData().getPersons().stream().filter(firestation ->

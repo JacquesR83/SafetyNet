@@ -38,8 +38,8 @@ public class PersonController {
     }
 
     @PutMapping(path = "person/update")
-    public void updatePerson (@RequestBody Person person){
-        personService.updatePerson(person);
+    public void updatePerson (@RequestParam (name = "firstName") String firstName, @RequestParam (name = "lastName") String lastName, @RequestBody Person person){
+        personService.updatePerson(firstName, lastName, person);
     }
 
 

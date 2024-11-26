@@ -1,11 +1,11 @@
 package com.safetynetalerts.demo.controller;
 
+import com.safetynetalerts.demo.model.Firestation;
+import com.safetynetalerts.demo.model.Person;
 import com.safetynetalerts.demo.service.FirestationService;
 import com.safetynetalerts.demo.service.dto.FirestationDTO;
 import com.safetynetalerts.demo.service.dto.HearthDTO;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +18,48 @@ public class FirestationController {
         this.firestationService = firestationService;
     }
 
+    // CRUD
+
+    @GetMapping(path= "firestation/get")
+    public Firestation getFirestation(@RequestParam (name = "address") String address) {
+        return firestationService.getFirestation(address);
+    }
+
+    @PostMapping(path = "firestation/add")
+    public void addFirestation(@RequestBody Firestation firestation){
+        firestationService.addFirestation(firestation);
+    }
+
+    @DeleteMapping(path = "firestation/delete")
+    public String deleteFirestation(@RequestParam (name = "address", required = false) String address, @RequestParam (name = "number", required = false) String number){
+        if (address == null && number == null){
+            return "Need at least one parameter";
+        } else {
+            firestationService.deleteFirestation(address, number);
+            return "Delete success";
+        }
+    }
+//
+//    @PutMapping(path = "firestation/update")
+//    public void updateFirestation (@RequestParam (name = "address") String address, @RequestParam (name = "number") int number, @RequestBody Firestation firestation){
+//        firestationService.updateFirestation(address, number, firestation);
+//    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    //URLS
     @GetMapping(path = "phoneAlert")
     public List<String> phoneNumbersList(@RequestParam(name = "firestation") int number) {
         return this.firestationService.findPhoneNumbersByStationNumber(number);

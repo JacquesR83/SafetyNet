@@ -33,10 +33,6 @@ public class PersonService {
         this.medicalRecordsRepository = medicalRecordsRepository;
     }
 
-    public void addPerson(Person person) {
-        this.personRepository.save(person);
-    }
-
 
     public List<String> findAllEmailsByCity(String city) {
         return this.personRepository.findAllPersons().stream().filter(p -> p.getCity().equals(city)).map(p -> p.getEmail()).collect(toList());
@@ -174,10 +170,16 @@ public class PersonService {
                 .collect(toList());
     }
 
+
+    // CRUD
     public List<Person> findAllPersonsWithLastName(String lastName) {
         List <Person> result = new ArrayList();
         result = personRepository.findAllPersons().stream().filter(p ->p.getLastName().equals(lastName)).toList();
         return result;
+    }
+
+    public void addPerson(Person person) {
+        this.personRepository.save(person);
     }
 
     public void deletePersonByFirstNameAndLastName(String firstName, String lastName) {
@@ -186,6 +188,34 @@ public class PersonService {
             throw new IllegalArgumentException();
         }
         personRepository.deletePerson(firstName, lastName);
+    }
+
+    public void updatePerson(String firstName,String lastName , Person person) {
+        Person updatedPerson = personRepository.findPersonByFirstNameAndLastName(firstName, lastName);
+
+        if(person.getFirstName() !=  null){
+            updatedPerson.setFirstName(person.getFirstName());
+        }
+        if (person.getLastName() != null) {
+            updatedPerson.setLastName(person.getLastName());
+        }
+        if (person.getEmail() != null) {
+            updatedPerson.setEmail(person.getEmail());
+        }
+        if (person.getAddress() != null) {
+            updatedPerson.setAddress(person.getAddress());
+        }
+        if (person.getPhone() != null) {
+            updatedPerson.setPhone(person.getPhone());
+        }
+        if (person.getCity() != null) {
+            updatedPerson.setCity(person.getCity());
+        }
+        if (person.getZip() != null) {
+            updatedPerson.setZip(person.getZip());
+        }
+
+
     }
 }
 
