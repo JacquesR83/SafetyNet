@@ -28,18 +28,19 @@ public class PersonController {
     }
 
     @PostMapping(path = "person/add")
-    public void addPerson(@RequestBody Person person){
-        personService.addPerson(person);
+    public Person addPerson(@RequestBody Person person){
+        return personService.addPerson(person);
     }
 
     @DeleteMapping(path = "person/delete")
-    public void deletePerson(@RequestParam (name = "firstName") String firstName, @RequestParam (name = "lastName") String lastName){
+    public String deletePerson(@RequestParam (name = "firstName") String firstName, @RequestParam (name = "lastName") String lastName){
         personService.deletePersonByFirstNameAndLastName(firstName, lastName);
+        return ("Personne effacée");
     }
 
     @PutMapping(path = "person/update")
-    public void updatePerson (@RequestParam (name = "firstName") String firstName, @RequestParam (name = "lastName") String lastName, @RequestBody Person person){
-        personService.updatePerson(firstName, lastName, person);
+    public Person updatePerson (@RequestParam (name = "firstName") String firstName, @RequestParam (name = "lastName") String lastName, @RequestBody Person person){
+        return (personService.updatePerson(firstName, lastName, person));
     }
 
 

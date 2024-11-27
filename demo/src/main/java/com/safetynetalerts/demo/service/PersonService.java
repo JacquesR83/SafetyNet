@@ -36,7 +36,6 @@ public class PersonService {
 
     public List<String> findAllEmailsByCity(String city) {
         return this.personRepository.findAllPersons().stream().filter(p -> p.getCity().equals(city)).map(p -> p.getEmail()).collect(toList());
-
     }
 
     public List<FireDTO> findAllPersonsWithMedicalRecords(String address) {
@@ -178,8 +177,9 @@ public class PersonService {
             return result;
     }
 
-    public void addPerson(Person person) {
+    public Person addPerson(Person person) {
         this.personRepository.save(person);
+        return person;
     }
 
     public void deletePersonByFirstNameAndLastName(String firstName, String lastName) {
@@ -190,34 +190,22 @@ public class PersonService {
         personRepository.deletePerson(firstName, lastName);
     }
 
-    public void updatePerson(String firstName,String lastName , Person person) {
+    public Person updatePerson(String firstName, String lastName , Person person) {
         Person updatedPerson = personRepository.findPersonByFirstNameAndLastName(firstName, lastName);
 
-        if(person.getFirstName() !=  null){
+        if(person.getFirstName().equals(firstName) && person.getLastName().equals(lastName)) {
             updatedPerson.setFirstName(firstName);
-        }
-        if (person.getLastName() != null) {
             updatedPerson.setLastName(lastName);
-        }
-        if (person.getEmail() != null) {
             updatedPerson.setEmail(person.getEmail());
-        }
-        if (person.getAddress() != null) {
             updatedPerson.setAddress(person.getAddress());
-        }
-        if (person.getPhone() != null) {
             updatedPerson.setPhone(person.getPhone());
-        }
-        if (person.getCity() != null) {
             updatedPerson.setCity(person.getCity());
-        }
-        if (person.getZip() != null) {
             updatedPerson.setZip(person.getZip());
         }
         else {
-            throw new IllegalArgumentException ( firstName + " " + lastName + " doesn't exist");
+            throw new IllegalArgumentException(firstName + " " + lastName + " doesn't exist / firstName and lastName can't be changed");
         }
-
+        return (updatedPerson);
     }
 }
 
