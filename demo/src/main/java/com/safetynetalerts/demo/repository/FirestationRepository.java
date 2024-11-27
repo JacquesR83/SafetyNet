@@ -1,6 +1,7 @@
 package com.safetynetalerts.demo.repository;
 
 import com.safetynetalerts.demo.model.Firestation;
+import com.safetynetalerts.demo.model.Person;
 import com.safetynetalerts.demo.service.FirestationService;
 import org.springframework.stereotype.Repository;
 
@@ -39,6 +40,11 @@ public class FirestationRepository {
     public void save(Firestation firestation) {
         dataHandler.getData().getFirestations().add(firestation);
     }
+
+    public void delete(String number) {
+        dataHandler.getData().getFirestations().removeIf(f -> f.getStation().equals(number));
+    }
+
 
 //
 //    public List<Firestation> findPeopleByStation(int number) {

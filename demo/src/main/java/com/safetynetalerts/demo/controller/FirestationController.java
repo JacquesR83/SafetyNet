@@ -21,8 +21,12 @@ public class FirestationController {
     // CRUD
 
     @GetMapping(path= "firestation/get")
-    public Firestation getFirestation(@RequestParam (name = "address") String address) {
-        return firestationService.getFirestation(address);
+    public Firestation getFirestation (@RequestParam (name = "address") String address) {
+        if(firestationService.getFirestation(address) != null){
+            return firestationService.getFirestation(address);
+        } else {
+            throw new IllegalArgumentException ("No firestation at this address"); // Ne fonctionne pas
+        }
     }
 
     @PostMapping(path = "firestation/add")
@@ -31,19 +35,15 @@ public class FirestationController {
     }
 
     @DeleteMapping(path = "firestation/delete")
-    public String deleteFirestation(@RequestParam (name = "address", required = false) String address, @RequestParam (name = "number", required = false) String number){
-        if (address == null && number == null){
-            return "Need at least one parameter";
-        } else {
-            firestationService.deleteFirestation(address, number);
-            return "Delete success";
-        }
+    public void deleteFirestation(@RequestParam (name = "number") String number){
+            firestationService.deleteFirestation(number);
     }
-//
-//    @PutMapping(path = "firestation/update")
-//    public void updateFirestation (@RequestParam (name = "address") String address, @RequestParam (name = "number") int number, @RequestBody Firestation firestation){
-//        firestationService.updateFirestation(address, number, firestation);
-//    }
+
+
+    @PutMapping(path = "firestation/update")
+    public void updateFirestation (@RequestParam (name = "address") String address, @RequestBody Firestation firestation){
+        firestationService.updateFirestation(address,firestation);
+    }
 
 
 

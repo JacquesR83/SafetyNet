@@ -173,9 +173,9 @@ public class PersonService {
 
     // CRUD
     public List<Person> findAllPersonsWithLastName(String lastName) {
-        List <Person> result = new ArrayList();
-        result = personRepository.findAllPersons().stream().filter(p ->p.getLastName().equals(lastName)).toList();
-        return result;
+            List<Person> result = new ArrayList();
+            result = personRepository.findAllPersons().stream().filter(p -> p.getLastName().equals(lastName)).toList();
+            return result;
     }
 
     public void addPerson(Person person) {
@@ -214,7 +214,9 @@ public class PersonService {
         if (person.getZip() != null) {
             updatedPerson.setZip(person.getZip());
         }
-
+        else {
+            throw new IllegalArgumentException ( firstName + " " + lastName + " doesn't exist");
+        }
 
     }
 }

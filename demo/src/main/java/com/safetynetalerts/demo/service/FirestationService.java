@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.safetynetalerts.demo.model.Person.computeToAge;
 import static com.safetynetalerts.demo.service.PersonService.medicalRecordsContainsPerson;
@@ -235,6 +236,29 @@ public class FirestationService {
 
     public void addFirestation(Firestation firestation) {
         this.firestationRepository.save(firestation);
+    }
+
+    public void deleteFirestation(String number) {
+        if (number == null) {
+            throw new IllegalArgumentException("Need at least one parameter");
+        } else {
+            this.firestationRepository.delete(number);
+        }
+    }
+
+    public void updateFirestation(String address, Firestation firestation) {
+        Firestation updatedFirestation = firestationRepository.findAllFireStations().stream()
+                .filter(f -> f.getAddress().equals(address)).findFirst().get();
+
+        if(firestation.getAddress() !=  null){
+            updatedFirestation.setAddress(firestation.getAddress());
+        }
+        if (firestation.getStation() != null) {
+            updatedFirestation.setStation(firestation.getStation());
+        }
+        else {
+            throw new IllegalArgumentException ( firestation + " doesn't exist");
+        }
     }
 //
 //    public void deleteFirestation(String address, int number) {
