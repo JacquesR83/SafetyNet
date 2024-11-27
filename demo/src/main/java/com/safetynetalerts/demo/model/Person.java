@@ -4,14 +4,14 @@ import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
 
-public class Person {
-    private String firstName;
+public class Person {private String firstName;
     private String lastName;
     private String address;
     private String city;
     private String zip;
     private String phone;
     private String email;
+
 
     public Person() {
     }
