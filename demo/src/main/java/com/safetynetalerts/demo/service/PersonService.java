@@ -194,10 +194,10 @@ public class PersonService {
         Person updatedPerson = personRepository.findPersonByFirstNameAndLastName(firstName, lastName);
 
         if(person.getFirstName() !=  null){
-            updatedPerson.setFirstName(person.getFirstName());
+            updatedPerson.setFirstName(firstName);
         }
         if (person.getLastName() != null) {
-            updatedPerson.setLastName(person.getLastName());
+            updatedPerson.setLastName(lastName);
         }
         if (person.getEmail() != null) {
             updatedPerson.setEmail(person.getEmail());
