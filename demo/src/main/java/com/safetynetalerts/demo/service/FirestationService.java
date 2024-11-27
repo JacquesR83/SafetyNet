@@ -260,10 +260,4 @@ public class FirestationService {
             throw new IllegalArgumentException ( firestation + " doesn't exist");
         }
     }
-//
-//    public void deleteFirestation(String address, int number) {
-//    }
-//
-//    public void updateFirestation(String address, int number, Firestation firestation) {
-//    }
 }

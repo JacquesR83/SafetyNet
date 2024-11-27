@@ -2,14 +2,13 @@ package com.safetynetalerts.demo.repository;
 
 import com.safetynetalerts.demo.model.MedicalRecord;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
 @Repository
 public class MedicalRecordsRepository {
 
-    private DataHandler dataHandler;
+    private final DataHandler dataHandler;
 
     public MedicalRecordsRepository(DataHandler dataHandler) {
         this.dataHandler = dataHandler;
@@ -19,5 +18,13 @@ public class MedicalRecordsRepository {
         return dataHandler.getData().getMedicalrecords();
     }
 
+    public void save(MedicalRecord medicalRecord) {
+        dataHandler.getData().getMedicalrecords().add(medicalRecord);
+    }
+
+    public void delete(String firstName, String lastName) {
+        dataHandler.getData().getMedicalrecords().removeIf(medicalRecord ->
+                medicalRecord.getFirstName().equals(firstName) && medicalRecord.getLastName().equals(lastName));
+    }
 
 }
