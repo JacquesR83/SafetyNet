@@ -8,6 +8,7 @@ import com.safetynetalerts.demo.repository.FirestationRepository;
 import com.safetynetalerts.demo.repository.MedicalRecordsRepository;
 import com.safetynetalerts.demo.repository.PersonRepository;
 import com.safetynetalerts.demo.service.dto.FireDTO;
+import com.safetynetalerts.demo.service.dto.PersonDTO;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -79,6 +80,10 @@ class PersonServiceTest {
         ));
         Mockito.when(firestationRepository.findFireStationNumberByAddress("2 rue de la tour")).thenReturn(firestations.get(0));
         Mockito.when(medicalRecordsRepository.findAllMedicalRecords()).thenReturn(medicalRecords);
+
+        //Test familyInformation
+        Mockito.when(personRepository.findAllPersonsWithLastName("Doe")).thenReturn(personListTest.stream().filter(p -> p.getLastName().equals("Doe")).collect(Collectors.toList()));
+//        Mockito.when(personRepository.findAllPersonsWithLastName("Smith")).thenReturn(personListTest.stream().filter(p -> p.getLastName().equals("Smith")).collect(Collectors.toList()));
 
 
     }
@@ -181,7 +186,40 @@ class PersonServiceTest {
     }
 
     @Test
+    void medicalRecordsContainsPersonNameFalse() {
+        // ARRANGE
+        // Création d'une personne qui n'a pas de dossier médical
+        Person personNotFound = new Person("John", "Buds", "10 rue de la mer", "Colmar", "67", "887643", "rosie.buds@gmail.com");
+        List<MedicalRecord> medicalRecords = medicalRecordsRepository.findAllMedicalRecords();
+
+        // ACT
+        // Appeler la méthode avec une personne qui n'existe pas dans les dossiers médicaux
+        MedicalRecord result = personService.medicalRecordsContainsPerson(medicalRecords, personNotFound);
+
+        // ASSERT
+        assertNull(result);  // Vérifier que le résultat est bien null, car cette personne n'a pas de dossier médical
+    }
+
+    @Test
     void familyInformation() {
+        //ARRANGE
+
+        //ACT
+        List<PersonDTO> result = personService.familyInformation("John","Doe");
+
+        //ASSERT
+        assertEquals(2,result.size());
+    }
+
+    @Test
+    void familyInformationNotFound() {
+        //ARRANGE
+
+        //ACT
+        List<PersonDTO> result = personService.familyInformation("Alice","Smith");
+
+        //ASSERT
+        assertEquals(0, result.size());
     }
 
     @Test
