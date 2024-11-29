@@ -7,6 +7,7 @@ import com.safetynetalerts.demo.repository.DataHandler;
 import com.safetynetalerts.demo.repository.FirestationRepository;
 import com.safetynetalerts.demo.repository.MedicalRecordsRepository;
 import com.safetynetalerts.demo.repository.PersonRepository;
+import com.safetynetalerts.demo.service.dto.ChildDTO;
 import com.safetynetalerts.demo.service.dto.FireDTO;
 import com.safetynetalerts.demo.service.dto.PersonDTO;
 import org.junit.jupiter.api.Assertions;
@@ -58,7 +59,7 @@ class PersonServiceTest {
                         new String[] {"aznol:200mg", "puree 100g"},
                         new String[] {"nillacilan", "pollens"}
                 ),
-                new MedicalRecord("Frank", "Doe", "09/06/1982",
+                new MedicalRecord("Frank", "Doe", "09/06/2018",
                         new String[] {"aznol:200mg", "puree 100g"},  // Liste vide pour les médicaments et allergènes
                         new String[] {}
                 ),
@@ -83,8 +84,6 @@ class PersonServiceTest {
 
         //Test familyInformation
         Mockito.when(personRepository.findAllPersonsWithLastName("Doe")).thenReturn(personListTest.stream().filter(p -> p.getLastName().equals("Doe")).collect(Collectors.toList()));
-//        Mockito.when(personRepository.findAllPersonsWithLastName("Smith")).thenReturn(personListTest.stream().filter(p -> p.getLastName().equals("Smith")).collect(Collectors.toList()));
-
 
     }
 
@@ -224,21 +223,178 @@ class PersonServiceTest {
 
     @Test
     void childListAtThisAddress() {
+        //ARRANGE
+
+
+        //ACT
+        List<ChildDTO> children = personService.childListAtThisAddress("2 rue de la tour");
+
+
+        //ASSERT
+
+        assertEquals(1,children.size());
     }
 
     @Test
     void findAllPersonsWithLastName() {
+        //ARRANGE
+
+
+        //ACT
+        List<Person> result = personService.findAllPersonsWithLastName("Doe");
+
+        //ASSERT
+        assertEquals(2,result.size());
+
+
     }
 
     @Test
     void addPerson() {
+        //Arrange
+        Person newPerson = new Person(
+                "Edouard",
+                "Luis",
+                "30 rue martin",
+                "Nice",
+                "65555",
+                "514-567-7898",
+                "edouard.luis@gmail.com");
+
+        //ACT
+
+        Person result = personService.addPerson(newPerson);
+
+        //Assert
+        assertNotNull(result);
+
     }
 
     @Test
     void deletePersonByFirstNameAndLastName() {
+        //Arrange
+        Person existingPerson = new Person(
+                "Edouard",
+                "Luis",
+                "30 rue martin",
+                "Nice",
+                "06000",
+                "514-567-7898",
+                "edouard.luis@gmail.com");
+
+        Mockito.when(personRepository.exists("Edouard", "Luis")).thenReturn(true);
+
+
+        //ACT
+        personService.deletePersonByFirstNameAndLastName("Edouard", "Luis");
+
+        //Assert
+        Mockito.verify(personRepository, Mockito.times(1)).deletePerson("Edouard", "Luis");
+
+
     }
 
     @Test
-    void updatePerson() {
+    void deletePersonByFirstNameAndLastName_personNotFound() {
+        // ARRANGE
+        // Mock : la personne n'existe pas dans le repository
+        Mockito.when(personRepository.exists("Edouard", "Luis")).thenReturn(false);
+
+        // ACT & ASSERT
+        // Vérifie que l'exception IllegalArgumentException est lancée
+        assertThrows(IllegalArgumentException.class, () -> {
+            personService.deletePersonByFirstNameAndLastName("Edouard", "Luis");
+        });
     }
+
+
+    @Test
+    void updatePerson() {
+        //Arrange
+        Person existingPerson = new Person(
+                "Edouard",
+                "Luis",
+                "30 rue martin",
+                "Nice",
+                "06000",
+                "514-567-7898",
+                "edouard.luis@gmail.com");
+
+        Person updatedPerson = new Person(
+                "Edouard",
+                "Luis",
+                "35 rue martin",
+                "Lyon",
+                "69000",
+                "514-567-7898",
+                "edouard.luis@gmail.com");
+
+        Mockito.when(personRepository.findPersonByFirstNameAndLastName("Edouard","Luis")).thenReturn(existingPerson);
+
+
+        //ACT
+        Person result = personService.updatePerson("Edouard", "Luis", updatedPerson);
+
+        //Assert
+//        assertNotEquals(existingPerson.getAddress(), result.getAddress());
+        assertEquals(updatedPerson.getAddress(), result.getAddress());
+    }
+
+//    @Test
+//    void updatePersonWithFirstNameDifferent() {
+//        //Arrange
+//        Person existingPerson = new Person(
+//                "Edouard",
+//                "Luis",
+//                "30 rue martin",
+//                "Nice",
+//                "06000",
+//                "514-567-7898",
+//                "edouard.luis@gmail.com");
+//
+//        Person updatedPerson = new Person(
+//                "Edouard",
+//                "Luis",
+//                "35 rue martin",
+//                "Lyon",
+//                "69000",
+//                "514-567-7898",
+//                "edouard.luis@gmail.com");
+//
+//        Mockito.when(personRepository.findPersonByFirstNameAndLastName("Edouard","Luis")).thenReturn(existingPerson);
+//
+//        //ACT
+//        assertThrows(IllegalArgumentException.class, () -> {
+//            personService.updatePerson("Pierre", "Luis", updatedPerson);
+//        });
+//    }
+
+    @Test
+    void updatePerson_ExceptionFirstNameAndLastNameDifferent() {
+        // ARRANGE modifying names
+        Person existingPerson = new Person(
+                "Edouard",
+                "Luis",
+                "30 rue martin",
+                "Nice",
+                "06000",
+                "514-567-7898",
+                "edouard.luis@gmail.com");
+
+        Person updatedPerson = new Person(
+                "Jean",
+                "Dupont",
+                "35 rue martin",
+                "Lyon",
+                "69000",
+                "514-567-7898",
+                "jean.dupont@gmail.com");
+
+        // ACT & ASSERT
+        // Vérifie que l'exception est bien levée
+        assertThrows(IllegalArgumentException.class, () -> {
+            personService.updatePerson("Edouard", "Luis", updatedPerson);
+        });
+    }
+
 }

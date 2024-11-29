@@ -1,5 +1,6 @@
 package com.safetynetalerts.demo.repository;
 import com.jsoniter.JsonIterator;
+import com.jsoniter.output.JsonStream;
 import com.safetynetalerts.demo.model.Data;
 import org.apache.commons.io.IOUtils;
 import org.springframework.boot.jackson.JsonComponent;
@@ -7,6 +8,8 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -41,5 +44,11 @@ public class DataHandler {
         return data;
     }
 
+    public void save() throws IOException {
+        String json = JsonStream.serialize(data);
+        BufferedWriter writer = new BufferedWriter(new FileWriter("datatest.json"));
+        writer.write(json);
+        writer.close();
+    }
 
 }

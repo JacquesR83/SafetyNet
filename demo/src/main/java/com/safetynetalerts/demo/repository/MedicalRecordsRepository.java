@@ -18,8 +18,9 @@ public class MedicalRecordsRepository {
         return dataHandler.getData().getMedicalrecords();
     }
 
-    public void save(MedicalRecord medicalRecord) {
+    public MedicalRecord save(MedicalRecord medicalRecord) {
         dataHandler.getData().getMedicalrecords().add(medicalRecord);
+        return medicalRecord;
     }
 
     public void delete(String firstName, String lastName) {

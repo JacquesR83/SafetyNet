@@ -3,6 +3,7 @@ package com.safetynetalerts.demo.service;
 import com.safetynetalerts.demo.model.Firestation;
 import com.safetynetalerts.demo.model.MedicalRecord;
 import com.safetynetalerts.demo.model.Person;
+import com.safetynetalerts.demo.repository.DataHandler;
 import com.safetynetalerts.demo.repository.FirestationRepository;
 import com.safetynetalerts.demo.repository.MedicalRecordsRepository;
 import com.safetynetalerts.demo.repository.PersonRepository;
@@ -11,6 +12,7 @@ import com.safetynetalerts.demo.service.dto.FireDTO;
 import com.safetynetalerts.demo.service.dto.PersonDTO;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,12 +27,14 @@ public class PersonService {
     private final PersonRepository personRepository;
     private final FirestationRepository firestationRepository;
     private final MedicalRecordsRepository medicalRecordsRepository;
+    private final DataHandler dataHandler;
 
 
-    public PersonService(PersonRepository personRepository, FirestationRepository firestationRepository, MedicalRecordsRepository medicalRecordsRepository, FirestationService firestationService) {
+    public PersonService(PersonRepository personRepository, FirestationRepository firestationRepository, MedicalRecordsRepository medicalRecordsRepository, FirestationService firestationService, DataHandler dataHandler) {
         this.personRepository = personRepository;
         this.firestationRepository = firestationRepository;
         this.medicalRecordsRepository = medicalRecordsRepository;
+        this.dataHandler = dataHandler;
     }
 
 
@@ -170,15 +174,16 @@ public class PersonService {
     }
 
 
-    // CRUD
     public List<Person> findAllPersonsWithLastName(String lastName) {
             List<Person> result = new ArrayList();
             result = personRepository.findAllPersons().stream().filter(p -> p.getLastName().equals(lastName)).toList();
             return result;
     }
 
+
+    // CRUD
     public Person addPerson(Person person) {
-        this.personRepository.save(person);
+        this.personRepository.addToPersonList(person);
         return person;
     }
 
@@ -201,6 +206,11 @@ public class PersonService {
             updatedPerson.setPhone(person.getPhone());
             updatedPerson.setCity(person.getCity());
             updatedPerson.setZip(person.getZip());
+            try {
+                dataHandler.save();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         else {
             throw new IllegalArgumentException(firstName + " " + lastName + " doesn't exist / firstName and lastName can't be changed");

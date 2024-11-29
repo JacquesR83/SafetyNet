@@ -1,11 +1,8 @@
 package com.safetynetalerts.demo.controller;
 
 import com.safetynetalerts.demo.model.MedicalRecord;
-import com.safetynetalerts.demo.model.Person;
 import com.safetynetalerts.demo.service.MedicalRecordsService;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping
@@ -19,7 +16,7 @@ public class MedicalRecordsController {
 
     @GetMapping(path = "medicalRecord/get")
     public MedicalRecord getMedicalRecords (@RequestParam(name = "firstName") String firstName, @RequestParam(name = "lastName") String lastName){
-        return medicalRecordsService.findAllMedicalRecordsByName(firstName,lastName);
+        return medicalRecordsService.findMedicalRecordByName(firstName,lastName);
     }
 
     @PostMapping(path = "medicalRecord/add")
