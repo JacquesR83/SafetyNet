@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.safetynetalerts.demo.model.Person.computeToAge;
 import static com.safetynetalerts.demo.service.PersonService.medicalRecordsContainsPerson;
@@ -234,8 +233,9 @@ public class FirestationService {
                 .filter(f -> f.getAddress().equals(address)).findFirst().get();
     }
 
-    public void addFirestation(Firestation firestation) {
+    public Firestation addFirestation(Firestation firestation) {
         this.firestationRepository.save(firestation);
+        return firestation;
     }
 
     public void deleteFirestation(String number) {
