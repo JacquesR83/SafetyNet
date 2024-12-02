@@ -30,36 +30,37 @@ public class PersonRepository {
                 .findFirst().orElseGet(() -> new Person());
     }
 
-    public String findPersonEmail(String firstName, String lastName) {
-        return dataHandler.getData().getPersons().stream()
-                .filter(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName)).findFirst().map(p -> p.getEmail()).orElse(null);
-    }
+//    public String findPersonEmail(String firstName, String lastName) {
+//        return dataHandler.getData().getPersons().stream()
+//                .filter(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName)).findFirst().map(p -> p.getEmail()).orElse(null);
+//    }
+//
+//    public String findPersonAddress(String lastName) {
+//        return dataHandler.getData().getPersons().stream()
+//                .filter(person -> person.getLastName().equals(lastName)).findFirst().map(p -> p.getAddress()).orElse(null);
+//    }
 
-    public String findPersonAddress(String lastName) {
-        return dataHandler.getData().getPersons().stream()
-                .filter(person -> person.getLastName().equals(lastName)).findFirst().map(p -> p.getAddress()).orElse(null);
-    }
-
-    public String[] getPersonMedication(String lastName) {
-        return dataHandler.getData().getMedicalrecords().stream()
-                .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName)).findFirst().map(medicalRecord -> medicalRecord.getMedications()).orElse(null);
-    }
+//    public String[] getPersonMedication(String lastName) {
+//        return dataHandler.getData().getMedicalrecords().stream()
+//                .filter(medicalRecord -> medicalRecord.getLastName().equals(lastName)).findFirst().map(medicalRecord -> medicalRecord.getMedications()).orElse(null);
+//    }
 
     public List<Person> findAllPersonsWithLastName(String lastName) {
         return dataHandler.getData().getPersons().stream()
                 .filter(person -> person.getLastName().equals(lastName)).collect(Collectors.toList());
     }
 
-    public void addToPersonList(Person person) {
+    public Person addToPersonList(Person person) {
         dataHandler.getData().addPerson(person);
         try {
             dataHandler.save();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return person;
     }
 
-    public void deletePerson(String firstName, String lastName) {
+    public void deletePerson(String firstName, String lastName)  {
         dataHandler.getData().getPersons().removeIf(p -> p.getFirstName().equals(firstName) && p.getLastName().equals(lastName));
         try {
             dataHandler.save();
