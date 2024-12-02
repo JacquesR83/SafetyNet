@@ -224,10 +224,105 @@ class FirestationServiceTest {
     }
 
     @Test
-    void deleteFirestation() {
+    void deleteFirestationTrue() {
+        Firestation newFirestation = new Firestation(
+                "1 rue de la paix",
+                "3"
+        );
+
+        firestationService.deleteFirestation("3");
+
+
+        Mockito.verify(firestationRepository, Mockito.times(1)).delete("3");
     }
 
     @Test
+    void deleteFirestationException() {
+
+
+        //ACT
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            firestationService.deleteFirestation(null);
+        });
+        //ASSERT
+        assertEquals("Need at least one parameter", exception.getMessage());
+        };
+
+    @Test
     void updateFirestation() {
+
+        //ARRANGE
+        Firestation updatedFirestation = new Firestation();
+        updatedFirestation.setAddress("456 rue Foch");
+        updatedFirestation.setStation("4");
+
+
+        //ACT
+        Firestation result = firestationService.updateFirestation("123 rue daumesnil", updatedFirestation);
+
+
+        //ASSERT
+        assertEquals(result.getAddress(), updatedFirestation.getAddress());
+
     }
+
+    @Test
+    void updateFirestationExceptionAddressNull() {
+
+        //ARRANGE
+        Firestation updatedFirestation = new Firestation();
+        updatedFirestation.setAddress(null);
+        updatedFirestation.setStation("4");
+
+
+        //ACT
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            firestationService.updateFirestation(null, updatedFirestation);
+        });
+        //ASSERT
+        assertEquals("Firestation at this address null doesn't exist", exception.getMessage());
+    };
+
+    @Test
+    void updateFirestationExceptionStationNumberNull() {
+
+            //ARRANGE
+            Firestation updatedFirestation = new Firestation();
+            updatedFirestation.setAddress("123 rue daumesnil");
+            updatedFirestation.setStation(null);
+
+
+            //ACT
+            IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+                firestationService.updateFirestation("123 rue daumesnil", updatedFirestation);
+            });
+            //ASSERT
+            assertEquals(updatedFirestation + " can't be updated", exception.getMessage());
+        }
+
+    @Test
+    void updateFirestationExceptionAddressInsideNull() {
+
+        //ARRANGE
+        Firestation updatedFirestation = new Firestation();
+        updatedFirestation.setAddress("123 rue daumesnil");
+        updatedFirestation.setStation("4");
+
+        Firestation firestationNull = new Firestation();
+        updatedFirestation.setAddress("null");
+        updatedFirestation.setStation("5");
+
+
+
+        //ACT
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            firestationService.updateFirestation("123 rue daumesnil", firestationNull);
+        });
+        //ASSERT
+        assertEquals(firestationNull + " can't be updated", exception.getMessage());
+    }
+
+
 }
+
+

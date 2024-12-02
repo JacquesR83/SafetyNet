@@ -246,9 +246,10 @@ public class FirestationService {
         }
     }
 
-    public void updateFirestation(String address, Firestation firestation) {
+    public Firestation updateFirestation(String address, Firestation firestation) {
         Firestation updatedFirestation = firestationRepository.findAllFireStations().stream()
-                .filter(f -> f.getAddress().equals(address)).findFirst().get();
+                .filter(f -> f.getAddress().equals(address)).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Firestation at this address " + address + " doesn't exist"));
 
         if(firestation.getAddress() !=  null){
             updatedFirestation.setAddress(firestation.getAddress());
@@ -257,7 +258,8 @@ public class FirestationService {
             updatedFirestation.setStation(firestation.getStation());
         }
         else {
-            throw new IllegalArgumentException ( firestation + " doesn't exist");
+            throw new IllegalArgumentException ( firestation + " can't be updated");
         }
+        return updatedFirestation;
     }
 }

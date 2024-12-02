@@ -1,7 +1,6 @@
 package com.safetynetalerts.demo.controller;
 
 import com.safetynetalerts.demo.model.Firestation;
-import com.safetynetalerts.demo.model.Person;
 import com.safetynetalerts.demo.service.FirestationService;
 import com.safetynetalerts.demo.service.dto.FirestationDTO;
 import com.safetynetalerts.demo.service.dto.HearthDTO;
@@ -30,8 +29,9 @@ public class FirestationController {
     }
 
     @PostMapping(path = "firestation/add")
-    public void addFirestation(@RequestBody Firestation firestation){
+    public Firestation addFirestation(@RequestBody Firestation firestation){
         firestationService.addFirestation(firestation);
+        return firestation;
     }
 
     @DeleteMapping(path = "firestation/delete")
@@ -41,8 +41,8 @@ public class FirestationController {
 
 
     @PutMapping(path = "firestation/update")
-    public void updateFirestation (@RequestParam (name = "address") String address, @RequestBody Firestation firestation){
-        firestationService.updateFirestation(address,firestation);
+    public Firestation updateFirestation (@RequestParam (name = "address") String address, @RequestBody Firestation firestation){
+        return firestationService.updateFirestation(address,firestation);
     }
 
 
