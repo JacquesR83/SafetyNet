@@ -142,6 +142,26 @@ class PersonRepositoryTest {
     }
 
     @Test
+    void addToPersonListException() throws IOException {
+
+        Person person1 = new Person();
+        //ACT
+        Mockito.doThrow(new IOException("Save failed")).when(dataHandler).save();
+
+        //ASSERT
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            personRepository.addToPersonList(person1);
+        });
+
+        // Vérifie que l'exception contient le bon message
+        assertEquals("java.io.IOException: Save failed", exception.getMessage());
+
+        Mockito.verify(dataHandler, Mockito.times(1)).save();
+    }
+
+
+
+    @Test
     void deletePerson(){
 
         //ARRANGE
@@ -158,27 +178,27 @@ class PersonRepositoryTest {
     }
 
 // EXEMPLE DE ASSERT POUR EXCEPTION
-//    @Test
-//    void deletePersonException() throws IOException {
-//
-//        //ARRANGE
-//
-//        //ACT
-//        Mockito.doThrow(new IOException("Save failed")).when(dataHandler).save();
-//
-//        //ASSERT
-//        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
-//            personRepository.deletePerson("John", "Doe");
-//        });
-//
-//        // Vérifie que l'exception contient le bon message
-//        assertEquals("java.io.IOException: Save failed", exception.getMessage());
-//
-//        Mockito.verify(dataHandler, Mockito.times(1)).save();
-//    }
+    @Test
+    void deletePersonException() throws IOException {
+
+        //ARRANGE
+
+        //ACT
+        Mockito.doThrow(new IOException("Save failed")).when(dataHandler).save();
+
+        //ASSERT
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            personRepository.deletePerson("John", "Doe");
+        });
+
+        // Vérifie que l'exception contient le bon message
+        assertEquals("java.io.IOException: Save failed", exception.getMessage());
+
+        Mockito.verify(dataHandler, Mockito.times(1)).save();
+    }
 
     @Test
-    void exists() {
+    void existsTrue() {
         //ARRANGE
         Data mockData = Mockito.mock(Data.class);
         Mockito.when(dataHandler.getData()).thenReturn(mockData);
@@ -195,5 +215,19 @@ class PersonRepositoryTest {
 
         //ASSERT
         assertEquals (true, isHere);
+    }
+
+    @Test
+    void existsFalse() {
+        //ARRANGE
+        Data mockData = Mockito.mock(Data.class);
+        Mockito.when(dataHandler.getData()).thenReturn(mockData);
+        Mockito.when(mockData.getPersons()).thenReturn(people);
+
+        //ACT
+        boolean isHere = personRepository.exists("Larry", "Coper");
+
+        //ASSERT
+        assertEquals (false, isHere);
     }
 }
